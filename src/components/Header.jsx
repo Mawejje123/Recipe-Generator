@@ -1,14 +1,10 @@
-import React from "react"
+import chefClaudeLogo from "../images/chef.png"
 
-function Header() {
+export default function Header() {
     return (
         <header>
-            <nav>
-                
-                <span>Chef Claude</span>
-            </nav>
+            <img src={chefClaudeLogo}/>
+            <h1>Chef Claude</h1>
         </header>
     )
 }
-
-export default Header
