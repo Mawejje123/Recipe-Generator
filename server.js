@@ -2,6 +2,19 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';  // loads .env automatically
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static files from Vite build
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// SPA fallback: send index.html for non-API routes
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 const app = express();
 app.use(express.json());
@@ -65,6 +78,7 @@ Return pure markdown only – no extra chit-chat.
     }
 });
 
-app.listen(3001, () => {
-    console.log('Backend running on http://localhost:3001');
+const port = process.env.PORT || 3001;
+app.listen(port, () => {
+    console.log(`Backend running on port ${port}`);
 });
