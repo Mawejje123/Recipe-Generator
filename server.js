@@ -8,6 +8,10 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const app = express();
+app.use(express.json());
+app.use(cors());
+
 // Serve static files from Vite build
 app.use(express.static(path.join(__dirname, 'dist')));
 
@@ -15,10 +19,6 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
-
-const app = express();
-app.use(express.json());
-app.use(cors());
 
 const HF_API_KEY = process.env.HF_API_KEY;
 const HF_MODEL = 'Qwen/Qwen2.5-7B-Instruct';  // Recommended: solid, instruct-tuned, usually available on free tier
