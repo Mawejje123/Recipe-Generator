@@ -5,7 +5,11 @@ export async function getRecipeFromMistral(ingredientsArr) {
     try {
         console.log('📡 Calling backend API...')
         
-        const response = await fetch('http://localhost:3001/api/recipe', {
+        // ────────────────────────────────────────────────
+        // CHANGED: Use relative path instead of localhost
+        // This works both locally (with proxy) and in production on Render
+        // ────────────────────────────────────────────────
+        const response = await fetch('/api/recipe', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -14,15 +18,19 @@ export async function getRecipeFromMistral(ingredientsArr) {
         })
         
         if (!response.ok) {
-            const error = await response.json()
-            throw new Error(error.error || 'Failed to generate recipe')
+            let errorMessage = 'Failed to generate recipe';
+            try {
+                const error = await response.json();
+                errorMessage = error.error || errorMessage;
+            } catch {} // ignore json parse errors
+            throw new Error(errorMessage);
         }
         
-        const data = await response.json()
-        return data.recipe
+        const data = await response.json();
+        return data.recipe;
         
     } catch (err) {
-        console.error('❌ Error:', err)
-        throw err
+        console.error('❌ Error fetching recipe:', err);
+        throw err;
     }
 }
