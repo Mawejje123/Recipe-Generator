@@ -45,6 +45,7 @@ main {
     max-width: 900px;
     margin: 0 auto;
     padding: 32px 24px 40px;
+    padding-bottom: 80px;
 }
 
 /* Add ingredient form */
@@ -182,88 +183,6 @@ main {
     box-shadow: none;
 }
 
-/* ──────────────────────────────────────────────── */
-/*          BEST LOADING SPINNER ANIMATION           */
-/* ──────────────────────────────────────────────── */
-
-.loading-spinner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px 0;
-}
-
-.loading-spinner {
-    position: relative;
-    width: 48px;
-    height: 48px;
-}
-
-.loading-spinner::before,
-.loading-spinner::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 4px solid transparent;
-}
-
-.loading-spinner::before {
-    border-top-color: #D17557;
-    border-right-color: #D17557;
-    animation: spin 1.2s linear infinite;
-}
-
-.loading-spinner::after {
-    border-top-color: rgba(209, 117, 87, 0.3);
-    border-left-color: rgba(209, 117, 87, 0.3);
-    animation: spin-reverse 1.8s linear infinite;
-    animation-delay: 0.4s;
-}
-
-.loading-spinner-inner {
-    position: absolute;
-    inset: 8px;
-    border-radius: 50%;
-    background: linear-gradient(45deg, #D17557, #F4A261);
-    animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes spin-reverse {
-    to {
-        transform: rotate(-360deg);
-    }
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(0.85);
-        opacity: 0.7;
-    }
-    50% {
-        transform: scale(1.1);
-        opacity: 1;
-    }
-}
-
-/* Optional: full-screen overlay version */
-.loading-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(250, 250, 248, 0.75);
-    backdrop-filter: blur(6px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-
 /* Recipe display */
 .suggested-recipe-container {
     background: white;
@@ -310,4 +229,503 @@ main {
         width: 100%;
         max-width: 300px;
     }
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid #D1D5DB;           /* light gray */
+    border-top: 4px solid #D17557;       /* your accent color */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Optional: full overlay version when generating recipe */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(250, 250, 248, 0.7); /* semi-transparent bg */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+}
+
+.app-wrapper {
+  padding-bottom: 100px;        /* space for bottom nav */
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Scroll-to-top floating button */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 100px;                /* above nav */
+  right: 24px;
+  width: 50px;
+  height: 50px;
+  background: #D17557;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(209, 117, 87, 0.3);
+  transition: all 0.2s ease;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scroll-top-btn:hover {
+  transform: scale(1.1);
+  background: #C65D40;
+}
+
+/* ──────────────────────────────────────────────── */
+/*          MODERN BOTTOM NAVIGATION BAR            */
+/* ──────────────────────────────────────────────── */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 76px;                    /* taller for better touch targets */
+  background: white;
+  border-top: 1px solid #E5E7EB;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  padding: 0 8px;
+  backdrop-filter: blur(10px);     /* nice subtle glass effect on scroll */
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.bottom-nav a,
+.bottom-nav button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 64px;                     /* wider touch target */
+  height: 64px;
+  color: #6B7280;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+.bottom-nav a:hover,
+.bottom-nav button:hover {
+  color: #D17557;
+  background: rgba(209, 117, 87, 0.08);
+}
+
+.bottom-nav a.active,
+.bottom-nav button.active {
+  color: #D17557;
+  background: rgba(209, 117, 87, 0.12);
+  font-weight: 600;
+}
+
+/* Icons – make them a bit larger & centered */
+.bottom-nav svg {
+  width: 26px;
+  height: 26px;
+  stroke-width: 2.2;
+  stroke: currentColor;
+  transition: transform 0.25s ease;
+}
+
+.bottom-nav a.active svg,
+.bottom-nav button.active svg {
+  transform: scale(1.12);
+}
+
+/* Extra breathing room on very small screens */
+@media (max-width: 360px) {
+  .bottom-nav {
+    height: 70px;
+  }
+  .bottom-nav a,
+  .bottom-nav button {
+    width: 56px;
+    height: 56px;
+    font-size: 0.7rem;
+  }
+  .bottom-nav svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.page-container {
+  padding: 32px 24px;
+  text-align: center;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-container h1 {
+  font-size: 2.2rem;
+  margin-bottom: 16px;
+  color: #111827;
+}
+
+.page-container p {
+  font-size: 1.1rem;
+  color: #4B5563;
+  max-width: 400px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 5px solid #444;
+  border-top: 5px solid #ff6b6b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.markdown-body {
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+  color: #e67e22;  /* orange for headings */
+}
+
+.markdown-body code {
+  background: #f1e3e3;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.markdown-body pre {
+  background: #ede1e1;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.markdown-body ul, .markdown-body ol {
+  padding-left: 1.8rem;
+}
+
+.recipe-card {
+  background-color: #1f2937;          /* same dark navy as ingredients card */
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  margin: 2rem auto;
+  max-width: 900px;
+}
+
+/* Hero (top image) */
+.recipe-hero {
+  position: relative;
+  height: 260px;                      /* adjust if needed */
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(31,41,55,0.85)); /* blends into dark bg */
+  display: flex;
+  align-items: flex-end;
+  padding: 2rem;
+}
+
+.recipe-title {
+  color: white;
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin: 0;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.9);
+}
+
+/* Main content – same dark bg */
+.recipe-content {
+  padding: 2rem 2.5rem;
+  background-color: #1f2937;          /* matches ingredients */
+  color: #e5e7eb;                     /* light text for dark mode */
+}
+
+/* Headings inside recipe */
+.section-heading {
+  color: #ff9f1c;                     /* your warm orange accent */
+  font-size: 1.85rem;
+  margin: 2.2rem 0 1rem;
+  border-bottom: 1px solid #374151;
+  padding-bottom: 0.6rem;
+}
+
+.section-subheading {
+  color: #ffca80;
+  font-size: 1.5rem;
+  margin: 1.8rem 0 1rem;
+}
+
+/* Lists & spacing */
+.recipe-content ul,
+.recipe-content ol {
+  padding-left: 1.8rem;
+  margin: 1.2rem 0;
+}
+
+.recipe-content li {
+  margin-bottom: 0.9rem;
+  color: #d1d5db;
+}
+
+/* Copy button – matches your orange theme */
+.copy-btn {
+  background: #d17557;                /* your orange button color */
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin: 2.5rem auto 1rem;
+  display: block;
+  transition: all 0.25s;
+}
+
+.copy-btn:hover {
+  background: #c65d40;
+}
+
+.copy-btn.copied {
+  background: #10b981;
+}
+
+/* ────────────────────────────────────────────────
+   INGREDIENTS LIST STYLING
+───────────────────────────────────────────────── */
+
+.ingredients-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #1f2937;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.ingredients-section h2 {
+  color: #f3f4f6;
+  margin-bottom: 1.2rem;
+  font-size: 1.5rem;
+}
+
+.ingredients-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ingredient-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.2rem;
+  background: #2d3748;
+  margin-bottom: 0.6rem;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.ingredient-item:hover {
+  background: #374151;
+}
+
+.view-mode {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}
+
+.ingredient-text {
+  flex: 1;
+  color: #e5e7eb;
+  font-size: 1.05rem;
+  word-break: break-word;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 30px;               /* ← exactly 30px between edit & remove */
+  flex-shrink: 0;
+}
+
+.edit-btn,
+.remove-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 6px;
+  transition: all 0.2s ease;
+  opacity: 0.8;
+  line-height: 1;
+}
+
+.edit-btn:hover {
+  opacity: 1;
+  color: #60a5fa;
+  transform: scale(1.15);
+}
+
+.remove-btn:hover {
+  opacity: 1;
+  color: #f87171;
+  transform: scale(1.15);
+}
+
+/* Editing mode */
+.edit-mode {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.edit-input {
+  flex: 1;
+  min-width: 180px;
+  padding: 10px 14px;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  background: #1f2937;
+  color: #f3f4f6;
+  font-size: 1.05rem;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.save-btn,
+.cancel-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.save-btn {
+  background: #10b981;
+  color: white;
+}
+
+.save-btn:hover {
+  background: #059669;
+}
+
+.cancel-btn {
+  background: #6b7280;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background: #4b5563;
+}
+
+/* Get recipe button */
+.get-recipe-btn {
+  background: #d17557;
+  color: white;
+  border: none;
+  padding: 14px 32px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.get-recipe-btn:hover:not(:disabled) {
+  background: #c65d40;
+  transform: translateY(-2px);
+}
+
+.get-recipe-btn:disabled {
+  background: #6b7280;
+  cursor: not-allowed;
+}
+
+/* Clear all button */
+.clear-all-btn {
+  margin-top: 1.5rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+  transition: background 0.2s;
+}
+
+.clear-all-btn:hover {
+  background: #dc2626;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .action-buttons {
+    gap: 20px;           /* slightly smaller gap on mobile */
+  }
+  
+  .ingredient-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .action-buttons {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
