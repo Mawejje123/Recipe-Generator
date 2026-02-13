@@ -1,6 +1,4 @@
-// api/recipe.js – Vercel serverless function
-import { Mistral } from '@mistralai/mistralai';
-
+// api/recipe.js – Vercel serverless function for Hugging Face
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -15,30 +13,56 @@ export default async function handler(req, res) {
 
     console.log('Generating recipe for:', ingredients);
 
-    const mistral = new Mistral({
-      apiKey: process.env.MISTRAL_API_KEY,
-    });
+    const HF_API_KEY = process.env.HF_API_KEY;
 
-    const chatResponse = await mistral.chat.complete({
-      model: "mistral-large-latest",
-      messages: [
-        {
-          role: "user",
-          content: `You are a world-class chef. Generate a delicious, detailed recipe using these ingredients: ${ingredients.join(', ')}. 
-          Format in clean markdown with:
-          - # Main Title
-          - ## Ingredients list
-          - ## Step-by-step instructions
-          - Optional: tips, variations, or Ugandan twists if ingredients match.`,
+    if (!HF_API_KEY) {
+      console.error('Missing HF_API_KEY environment variable');
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
+
+    const prompt = `You are a world-class chef. Generate a delicious, detailed recipe using these ingredients: ${ingredients.join(', ')}. 
+Format in clean markdown with:
+- # Main Title
+- ## Ingredients list
+- ## Step-by-step instructions
+- Optional: tips, variations, or Ugandan twists if ingredients match.`;
+
+    const response = await fetch(
+      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${HF_API_KEY}`,
+          "Content-Type": "application/json",
         },
-      ],
-    });
+        body: JSON.stringify({
+          inputs: prompt,
+          parameters: {
+            max_new_tokens: 800,
+            temperature: 0.7,
+            top_p: 0.9,
+            return_full_text: false,
+          },
+        }),
+      }
+    );
 
-    const recipeText = chatResponse.choices[0].message.content;
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('Hugging Face API error:', error);
+      return res.status(response.status).json({ error: error.error || 'API request failed' });
+    }
 
-    res.status(200).json({ recipe: recipeText });
+    const result = await response.json();
+    const generatedText = result[0]?.generated_text?.trim() || '';
+
+    if (!generatedText) {
+      return res.status(500).json({ error: 'No recipe generated' });
+    }
+
+    res.status(200).json({ recipe: generatedText });
   } catch (error) {
-    console.error('Mistral API error:', error);
+    console.error('Recipe generation error:', error);
     res.status(500).json({ error: 'Failed to generate recipe' });
   }
 }
