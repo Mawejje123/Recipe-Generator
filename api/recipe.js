@@ -37,12 +37,30 @@ app.post('/api/recipe', async (req, res) => {
             ingredientsString +
             '. Please give me a recipe you would recommend I make! [/INST]';
 
-    // Change from localhost to relative path (Vercel handles it)
-const response = await fetch('/api/recipe', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ ingredients })
-});
+        const response = await fetch(
+    'https://router.huggingface.co/hf-inference/models/meta-llama/Llama-3.2-3B-Instruct',
+    {
+        method: 'POST',
+        headers: {
+            Authorization: 'Bearer ' + process.env.HF_ACCESS_TOKEN,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            inputs: prompt,
+            parameters: {
+                max_new_tokens: 1024,
+                temperature: 0.7,
+                top_p: 0.95,
+                return_full_text: false,
+            },
+            options: {
+                wait_for_model: true,
+                use_cache: false,
+            },
+        }),
+    }
+);
+
 
         console.log('Response status:', response.status);
 
