@@ -1,15 +1,11 @@
-// api/recipe.js
-import express from 'express';
-import cors from 'cors';
+// api/recipe.js – Vercel serverless function
 import { Mistral } from '@mistralai/mistralai';
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-const mistral = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
-
-app.post('/', async (req, res) => {
   try {
     const { ingredients } = req.body;
 
@@ -17,21 +13,32 @@ app.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Ingredients must be an array' });
     }
 
-    const prompt = `Generate a creative recipe using these ingredients: ${ingredients.join(', ')}. Make it delicious, step-by-step, and fun.`;
+    console.log('Generating recipe for:', ingredients);
 
-    const response = await mistral.chat.complete({
-      model: "mistral-large-latest",
-      messages: [{ role: "user", content: prompt }]
+    const mistral = new Mistral({
+      apiKey: process.env.MISTRAL_API_KEY,
     });
 
-    const recipeText = response.choices[0].message.content;
+    const chatResponse = await mistral.chat.complete({
+      model: "mistral-large-latest",
+      messages: [
+        {
+          role: "user",
+          content: `You are a world-class chef. Generate a delicious, detailed recipe using these ingredients: ${ingredients.join(', ')}. 
+          Format in clean markdown with:
+          - # Main Title
+          - ## Ingredients list
+          - ## Step-by-step instructions
+          - Optional: tips, variations, or Ugandan twists if ingredients match.`,
+        },
+      ],
+    });
 
-    res.json({ recipe: recipeText });
+    const recipeText = chatResponse.choices[0].message.content;
+
+    res.status(200).json({ recipe: recipeText });
   } catch (error) {
     console.error('Mistral API error:', error);
     res.status(500).json({ error: 'Failed to generate recipe' });
   }
-});
-
-// Export for Vercel
-export default app;
+}
