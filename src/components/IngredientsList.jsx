@@ -31,6 +31,8 @@ export default function IngredientsList(props) {
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
                     autoFocus
+                    className="edit-input"
+                    aria-label={`Edit ingredient ${ingredient}`}
                 />
                 <button onClick={() => saveEdit(index)} className="save-btn">
                     Save
@@ -73,7 +75,11 @@ export default function IngredientsList(props) {
             <h3>Ready for a recipe?</h3>
             <p>Generate a recipe from your list of ingredients.</p>
           </div>
-          <button onClick={getRecipe} disabled={isLoading}>
+          <button 
+            onClick={getRecipe} 
+            disabled={isLoading}
+            className="get-recipe-btn"  // keep class if you have specific styles, but we'll override in CSS
+          >
             {isLoading ? "Generating..." : "Get a recipe"}
           </button>
         </div>
